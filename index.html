@@ -1,41 +1,80 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="it">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Meteo Torino</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meteo Torino - Previsioni Attuali</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #56ccf2, #2f80ed);
+      color: #fff;
+    }
+    header {
+      text-align: center;
       padding: 2rem;
-      background: #f0f0f0;
+      background-color: rgba(0, 0, 0, 0.2);
+    }
+    header h1 {
+      margin: 0;
+      font-size: 2.5rem;
     }
     .container {
-      background: white;
-      border-radius: 1rem;
+      max-width: 800px;
+      margin: 2rem auto;
+      background-color: rgba(255, 255, 255, 0.1);
       padding: 2rem;
-      max-width: 400px;
-      margin: auto;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    }
-    h1 {
-      text-align: center;
+      border-radius: 1rem;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
     }
     .data {
-      margin-top: 1rem;
-      font-size: 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      font-size: 1.3rem;
+    }
+    .data-item {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255,255,255,0.3);
+      padding-bottom: 0.5rem;
+    }
+    footer {
+      text-align: center;
+      margin-top: 3rem;
+      font-size: 0.9rem;
+      opacity: 0.7;
     }
   </style>
 </head>
 <body>
-  <div class="container">
+  <header>
     <h1>Meteo Torino</h1>
+    <p>Previsioni aggiornate in tempo reale</p>
+  </header>
+
+  <div class="container">
     <div class="data">
-      <p><strong>Temperatura:</strong> <span id="temperature">...</span> °C</p>
-      <p><strong>Precipitazioni:</strong> <span id="precipitation">...</span> mm</p>
-      <p><strong>Vento:</strong> <span id="wind">...</span> km/h</p>
+      <div class="data-item">
+        <span><strong>Temperatura attuale</strong></span>
+        <span id="temperature">...</span>
+      </div>
+      <div class="data-item">
+        <span><strong>Precipitazioni</strong></span>
+        <span id="precipitation">...</span>
+      </div>
+      <div class="data-item">
+        <span><strong>Velocità del vento</strong></span>
+        <span id="wind">...</span>
+      </div>
     </div>
   </div>
+
+  <footer>
+    &copy; 2025 Meteo Torino - Dati forniti da <a href="https://open-meteo.com" target="_blank" style="color:#fff; text-decoration: underline;">Open-Meteo</a>
+  </footer>
+
   <script>
     fetch("https://api.open-meteo.com/v1/forecast?latitude=45.0705&longitude=7.6868&hourly=temperature_2m&current=precipitation,wind_speed_10m,temperature_2m")
       .then(res => res.json())
@@ -43,12 +82,13 @@
         const temperature = data.current.temperature_2m;
         const precipitation = data.current.precipitation;
         const windSpeed = data.current.wind_speed_10m;
-        document.getElementById("temperature").textContent = temperature;
-        document.getElementById("precipitation").textContent = precipitation;
-        document.getElementById("wind").textContent = windSpeed;
+
+        document.getElementById("temperature").textContent = `${temperature} °C`;
+        document.getElementById("precipitation").textContent = `${precipitation} mm`;
+        document.getElementById("wind").textContent = `${windSpeed} km/h`;
       })
-      .catch(err => {
-        console.error("Errore nel recupero dei dati meteo:", err);
+      .catch(error => {
+        console.error("Errore nel caricamento dati meteo:", error);
       });
   </script>
 </body>
