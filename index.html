@@ -4,17 +4,31 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Meteo Torino - Previsioni Attuali</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
-    body {
+    html, body {
       margin: 0;
+      padding: 0;
+      height: 100%;
+    }
+    body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(to right, #56ccf2, #2f80ed);
       color: #fff;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      transition: background-image 1s ease-in-out;
+    }
+    .overlay {
+      height: 100vh;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
     }
     header {
       text-align: center;
       padding: 2rem;
-      background-color: rgba(0, 0, 0, 0.2);
     }
     header h1 {
       margin: 0;
@@ -22,10 +36,11 @@
     }
     .container {
       max-width: 800px;
-      margin: 2rem auto;
-      background-color: rgba(255, 255, 255, 0.1);
+      margin: auto;
+      background-color: rgba(0, 0, 0, 0.5);
       padding: 2rem;
       border-radius: 1rem;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
     }
     .data {
       display: flex;
@@ -41,41 +56,47 @@
     }
     footer {
       text-align: center;
-      margin-top: 3rem;
+      padding: 1rem;
       font-size: 0.9rem;
       opacity: 0.7;
+    }
+    a {
+      color: #fff;
+      text-decoration: underline;
     }
   </style>
 </head>
 <body>
-  <header>
-    <h1>Meteo Torino</h1>
-    <p>Previsioni aggiornate in tempo reale</p>
-  </header>
+  <div class="overlay">
+    <header>
+      <h1>Meteo Torino</h1>
+      <p>Previsioni aggiornate in tempo reale</p>
+    </header>
 
-  <div class="container">
-    <div class="data">
-      <div class="data-item">
-        <span><strong>Temperatura attuale</strong></span>
-        <span id="temperature">...</span>
-      </div>
-      <div class="data-item">
-        <span><strong>Precipitazioni</strong></span>
-        <span id="precipitation">...</span>
-      </div>
-      <div class="data-item">
-        <span><strong>Velocità del vento</strong></span>
-        <span id="wind">...</span>
+    <div class="container">
+      <div class="data">
+        <div class="data-item">
+          <span><strong>Temperatura attuale</strong></span>
+          <span id="temperature">...</span>
+        </div>
+        <div class="data-item">
+          <span><strong>Precipitazioni</strong></span>
+          <span id="precipitation">...</span>
+        </div>
+        <div class="data-item">
+          <span><strong>Velocità del vento</strong></span>
+          <span id="wind">...</span>
+        </div>
       </div>
     </div>
+
+    <footer>
+      &copy; 2025 Meteo Torino - Dati forniti da <a href="https://open-meteo.com" target="_blank">Open-Meteo</a>
+    </footer>
   </div>
 
-  <footer>
-    &copy; 2025 Meteo Torino - Dati forniti da <a href="https://open-meteo.com" target="_blank" style="color:#fff; text-decoration: underline;">Open-Meteo</a>
-  </footer>
-
   <script>
-    fetch("https://api.open-meteo.com/v1/forecast?latitude=45.0705&longitude=7.6868&hourly=temperature_2m&current=precipitation,wind_speed_10m,temperature_2m")
+    fetch("https://api.open-meteo.com/v1/forecast?latitude=45.0705&longitude=7.6868&hourly=temperature_2m&current=precipitation,wind_speed_10m,temperature_2m,is_day")
       .then(res => res.json())
       .then(data => {
         const temperature = data.current.temperature_2m;
@@ -85,6 +106,22 @@
         document.getElementById("temperature").textContent = `${temperature} °C`;
         document.getElementById("precipitation").textContent = `${precipitation} mm`;
         document.getElementById("wind").textContent = `${windSpeed} km/h`;
+
+        const now = new Date();
+        const hours = now.getHours();
+
+        let backgroundUrl = '';
+        if (hours >= 8 && hours <= 11) {
+          backgroundUrl = 'url("https://media.istockphoto.com/id/1544885113/it/foto/il-sole-che-sorge-sulla-catena-montuosa.jpg?s=612x612&w=0&k=20&c=JJltcU9pIEuSSUMPlj92lCepIPm4smV5oIJmVW93eyA=")';
+        } else if (hours >= 12 && hours <= 19) {
+          backgroundUrl = 'url("https://media.istockphoto.com/id/1342162257/it/foto/raggio-diretto-del-sole-nel-cielo-blu.jpg?s=612x612&w=0&k=20&c=JdY3ZumO5KE6YvOV8pHlQC_gJA9hGgO7VuwKD1jCArw=")';
+        } else if (hours >= 20 && hours <= 22) {
+          backgroundUrl = 'url("https://services.meteored.com/img/article/perche-sole-e-luna-si-tingono-di-rosso-all-alba-e-al-tramonto-1723049784862_1280.png")';
+        } else {
+          backgroundUrl = 'url("https://www.rinnovabili.it/wp-content/uploads/2023/02/santuario-internazionale-del-cielo-notturno.jpg")';
+        }
+
+        document.body.style.backgroundImage = backgroundUrl;
       })
       .catch(error => {
         console.error("Errore nel caricamento dati meteo:", error);
