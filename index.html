@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Meteo Torino</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 2rem;
+      background: #f0f0f0;
+    }
+    .container {
+      background: white;
+      border-radius: 1rem;
+      padding: 2rem;
+      max-width: 400px;
+      margin: auto;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    h1 {
+      text-align: center;
+    }
+    .data {
+      margin-top: 1rem;
+      font-size: 1.2rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Meteo Torino</h1>
+    <div class="data">
+      <p><strong>Temperatura:</strong> <span id="temperature">...</span> °C</p>
+      <p><strong>Precipitazioni:</strong> <span id="precipitation">...</span> mm</p>
+      <p><strong>Vento:</strong> <span id="wind">...</span> km/h</p>
+    </div>
+  </div>
+  <script>
+    fetch("https://api.open-meteo.com/v1/forecast?latitude=45.0705&longitude=7.6868&hourly=temperature_2m&current=precipitation,wind_speed_10m,temperature_2m")
+      .then(res => res.json())
+      .then(data => {
+        const temperature = data.current.temperature_2m;
+        const precipitation = data.current.precipitation;
+        const windSpeed = data.current.wind_speed_10m;
+        document.getElementById("temperature").textContent = temperature;
+        document.getElementById("precipitation").textContent = precipitation;
+        document.getElementById("wind").textContent = windSpeed;
+      })
+      .catch(err => {
+        console.error("Errore nel recupero dei dati meteo:", err);
+      });
+  </script>
+</body>
+</html>
